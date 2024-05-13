@@ -25,7 +25,7 @@
             <label for="numberOfImagesSlider" class="col-sm-2 col-form-label">Number of Input Images:</label>
             <div class="col-sm-10 slider-label">
                 <input type="number" class="form-control input-mini" id="numberOfImagesInput" min="0" max="100"
-                value="0" oninput="syncInputs(this.value, 'numberOfImagesSlider');">
+                    value="0" oninput="syncInputs(this.value, 'numberOfImagesSlider');">
                 <input type="range" class="form-range" id="numberOfImagesSlider" min="0" max="100" value="0"
                     oninput="syncInputs(this.value, 'numberOfImagesInput');">
             </div>
@@ -34,7 +34,7 @@
             <label for="widthSlider" class="col-sm-2 col-form-label">Width of Each Image (px):</label>
             <div class="col-sm-10 slider-label">
                 <input type="number" class="form-control input-mini" id="widthInput" min="100" max="4000" value="512"
-                oninput="syncInputs(this.value, 'widthSlider');">
+                    oninput="syncInputs(this.value, 'widthSlider');">
                 <input type="range" class="form-range" id="widthSlider" min="100" max="4000" value="512" step="1"
                     oninput="syncInputs(this.value, 'widthInput');">
             </div>
@@ -43,7 +43,7 @@
             <label for="heightSlider" class="col-sm-2 col-form-label">Height of Each Image (px):</label>
             <div class="col-sm-10 slider-label">
                 <input type="number" class="form-control input-mini" id="heightInput" min="100" max="4000" value="512"
-                oninput="syncInputs(this.value, 'heightSlider');">
+                    oninput="syncInputs(this.value, 'heightSlider');">
                 <input type="range" class="form-range" id="heightSlider" min="100" max="4000" value="512" step="1"
                     oninput="syncInputs(this.value, 'heightInput');">
             </div>
@@ -52,7 +52,7 @@
             <label for="inputTextLengthSlider" class="col-sm-2 col-form-label">Text Input Length (words):</label>
             <div class="col-sm-10 slider-label">
                 <input type="number" class="form-control input-mini" id="inputTextLengthInput" min="0" max="50000"
-                value="0" oninput="syncInputs(this.value, 'inputTextLengthSlider');">
+                    value="0" oninput="syncInputs(this.value, 'inputTextLengthSlider');">
                 <input type="range" class="form-range" id="inputTextLengthSlider" min="0" max="50000" value="0"
                     oninput="syncInputs(this.value, 'inputTextLengthInput');">
             </div>
@@ -61,7 +61,7 @@
             <label for="outputTextLengthSlider" class="col-sm-2 col-form-label">Text Output Length (words):</label>
             <div class="col-sm-10 slider-label">
                 <input type="number" class="form-control input-mini" id="outputTextLengthInput" min="0" max="50000"
-                value="0" oninput="syncInputs(this.value, 'outputTextLengthSlider');">
+                    value="0" oninput="syncInputs(this.value, 'outputTextLengthSlider');">
                 <input type="range" class="form-range" id="outputTextLengthSlider" min="0" max="50000" value="0"
                     oninput="syncInputs(this.value, 'outputTextLengthInput');">
             </div>
@@ -78,6 +78,20 @@
                 </tr>
             </thead>
             <tbody id="costTable">
+                <tr>
+                    <td>GPT4o Vision (Low Detail)</td>
+                    <td>$5.00</td>
+                    <td>$15.00</td>
+                    <td>Tokens: 85</td>
+                    <td class="result" id="gpt4oLowCost">-</td>
+                </tr>
+                <tr>
+                    <td>GPT4o Vision (High Detail)</td>
+                    <td>$5.00</td>
+                    <td>$15.00</td>
+                    <td>Tokens: 85 + 170 per 512x512 tile</td>
+                    <td class="result" id="gpt4oHighCost">-</td>
+                </tr>
                 <tr>
                     <td>GPT4 Turbo Vision (Low Detail)</td>
                     <td>$10.00</td>
@@ -155,6 +169,21 @@
             const height = parseInt(document.getElementById('heightInput').value);
             const inputTextLengthTokens = parseInt(document.getElementById('inputTextLengthInput').value) * (4 / 3); // Assuming 1 word is equal to 3/4 tokens
             const outputTextLengthTokens = parseInt(document.getElementById('outputTextLengthInput').value) * (4 / 3); // Assuming 1 word is equal to 3/4 tokens
+
+            // GPT4o (Low Detail)
+            let gpt4otokensLow = 85 * numberOfImages;
+            let gpt4ocostPerMTokInputLow = 5 / 1000000;
+            let gpt4ocostPerMTokOutputLow = 15 / 1000000;
+            let gpt4ototalCostLow = ((gpt4otokensLow + inputTextLengthTokens) * gpt4ocostPerMTokInputLow) + (outputTextLengthTokens * gpt4ocostPerMTokOutputLow);
+            document.getElementById('gpt4oLowCost').textContent = `$${gpt4ototalCostLow.toFixed(7)}`;
+
+            // GPT4o (High Detail)
+            let gpt4otilesPerImage = Math.ceil(width / 512) * Math.ceil(height / 512);
+            let gpt4otokensHigh = (85 + (170 * gpt4otilesPerImage)) * numberOfImages;
+            let gpt4ocostPerMTokInputHigh = 5 / 1000000;
+            let gpt4ocostPerMTokOutputHigh = 15 / 1000000;
+            let gpt4ototalCostHigh = ((gpt4otokensHigh + inputTextLengthTokens) * gpt4ocostPerMTokInputHigh) + (outputTextLengthTokens * gpt4ocostPerMTokOutputHigh);
+            document.getElementById('gpt4oHighCost').textContent = `$${gpt4ototalCostHigh.toFixed(7)}`;
 
             // GPT4 Vision (Low Detail)
             let tokensLow = 85 * numberOfImages;
