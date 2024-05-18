@@ -111,14 +111,21 @@
                     <td>$0.50</td>
                     <td>$1.50</td>
                     <td>Cost: $0.0025 per image</td>
-                    <td class="result" id="gemini1.0Cost">-</td>
+                    <td class="result" id="geminipro1.0Cost">-</td>
+                </tr>
+                <tr>
+                    <td>Google Gemini 1.5 Flash</td>
+                    <td>$0.35 for prompts up to 128k tokens, otherwise $0.70</td>
+                    <td>$1.05 for prompts up to 128k tokens, otherwise $2.10</td>
+                    <td>Cost: $0.0001315 per image</td>
+                    <td class="result" id="geminiflash1.5Cost">-</td>
                 </tr>
                 <tr>
                     <td>Google Gemini 1.5 Pro</td>
-                    <td>$7.00</td>
-                    <td>$21.00</td>
-                    <td>Cost: $0.00265 per image</td>
-                    <td class="result" id="gemini1.5Cost">-</td>
+                    <td>$3.50 for prompts up to 128k tokens, otherwise $7.00</td>
+                    <td>$10.50 for prompts up to 128k tokens, otherwise $21.00</td>
+                    <td>Cost: $0.001315 per image</td>
+                    <td class="result" id="geminipro1.5Cost">-</td>
                 </tr>
                 <tr>
                     <td>Claude 3 Haiku</td>
@@ -205,13 +212,27 @@
             let inputTextCostGemini = (inputTextLengthTokens) * (0.5 / 1000000);
             let outputTextCostGemini = (outputTextLengthTokens) * (1.5 / 1000000);
             let totalCostGemini = imageCostGemini + inputTextCostGemini + outputTextCostGemini;
-            document.getElementById('gemini1.0Cost').textContent = `$${totalCostGemini.toFixed(7)}`;
+            document.getElementById('geminipro1.0Cost').textContent = `$${totalCostGemini.toFixed(7)}`;
 
-            let imageCostGemini15 = 0.00265 * numberOfImages;
-            let inputTextCostGemini15 = (inputTextLengthTokens) * (7 / 1000000);
-            let outputTextCostGemini15 = (outputTextLengthTokens) * (21 / 1000000);
-            let totalCostGemini15 = imageCostGemini15 + inputTextCostGemini15 + outputTextCostGemini15;
-            document.getElementById('gemini1.5Cost').textContent = `$${totalCostGemini15.toFixed(7)}`;
+            let imageCostGeminiFlash15 = 0.0001315 * numberOfImages;
+            let inputTextCostGeminiFlash15 = (inputTextLengthTokens) * (0.35 / 1000000);
+            let outputTextCostGeminiFlash15 = (outputTextLengthTokens) * (1.05 / 1000000);
+            if (inputTextLengthTokens >= 128000) {
+                inputTextCostGeminiFlash15 *= 2;
+                outputTextCostGeminiFlash15 *= 2;
+            }
+            let totalCostGeminiFlash15 = imageCostGeminiFlash15 + inputTextCostGeminiFlash15 + outputTextCostGeminiFlash15;
+            document.getElementById('geminiflash1.5Cost').textContent = `$${totalCostGeminiFlash15.toFixed(7)}`;
+
+            let imageCostGeminiPro15 = 0.001315 * numberOfImages;
+            let inputTextCostGeminiPro15 = (inputTextLengthTokens) * (3.50 / 1000000);
+            let outputTextCostGeminiPro15 = (outputTextLengthTokens) * (10.50 / 1000000);
+            if (inputTextLengthTokens >= 128000) {
+                inputTextCostGeminiPro15 *= 2;
+                outputTextCostGeminiPro15 *= 2;
+            }
+            let totalCostGeminiPro15 = imageCostGeminiPro15 + inputTextCostGeminiPro15 + outputTextCostGeminiPro15;
+            document.getElementById('geminipro1.5Cost').textContent = `$${totalCostGeminiPro15.toFixed(7)}`;
 
             // Claude 3 models
             let tokensClaude = (width * height * numberOfImages) / 750; // converting pixels to MTokens
